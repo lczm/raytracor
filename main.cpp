@@ -4,7 +4,23 @@
 #include "ray.h"
 #include "vec3.h"
 
+bool hit_sphere(const point3& center, double radius, const ray& r) {
+    vec3 origin_center = r.origin() - center;
+    // The 'squaring' part of the sphere equation - b^2
+    auto a = dot(r.direction(), r.direction());
+    // 2 * t * b - t = origin_center, b = r.direction()
+    auto b = 2.0 * dot(origin_center, r.direction());
+    // (a - c)^2 - r^2
+    auto c = dot(origin_center, origin_center) - radius * radius;
+    // b^2 - 4ac
+    auto discriminant = b * b - 4 * a * c;
+    // If there are 1 or 2 roots, it has an intersection.
+    return (discriminant > 0);
+}
+
 color ray_color(const ray& r) {
+    if (hit_sphere(point3(0, 0, -1), 0.5, r))
+        return color(1, 0, 0);
     // Get unit vector of the ray
     vec3 unit_direction = unit_vector(r.direction());
     // unit_direction.y() as this is a gradient based on the y-axis
