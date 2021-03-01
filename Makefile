@@ -1,5 +1,4 @@
 all: main.cpp
-	# g++ -Wall -o main main.cpp vec3.h color.h ray.h
 	g++ -Wall -o main main.cpp
 
 run: main
