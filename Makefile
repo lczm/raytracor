@@ -6,3 +6,4 @@ run: main
 
 clean:
 	$(RM) main
+
