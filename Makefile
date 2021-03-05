@@ -1,9 +1,23 @@
-all: main.cpp
-	g++ -Wall -O2 -o main main.cpp
+SOURCES := $(wildcard *.cpp)
+OBJECTS := $(patsubst %.cpp,%.o,$(SOURCES))
+DEPENDS := $(patsubst %.cpp,%.d,$(SOURCES))
 
-run: main
-	./main ${ARGS} > image.ppm && feh image.ppm
+WARNINGS := -Wall -Wextra
+
+.PHONY: all clean
+
+all: raytracor
 
 clean:
-	$(RM) main
+	$(RM) $(OBJECTS) $(DEPENDS) raytracor
 
+raytracor: $(OBJECTS)
+	g++ $(WARNINGS) $^ -o $@
+
+run: raytracor
+	./raytracor $(ARGS) > image.ppm && feh image.ppm
+
+-include $(DEPENDS)
+
+%.o: %.cpp Makefile
+	g++ $(WARNINGS) -MMD -MP -c $< -o $@
