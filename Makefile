@@ -15,7 +15,7 @@ raytracor: $(OBJECTS)
 	g++ $(WARNINGS) $^ -o $@
 
 run: raytracor
-	./raytracor $(ARGS) > image.ppm && feh image.ppm
+	./raytracor $(ARGS) > image.ppm && convert image.ppm image.png && feh image.png
 
 -include $(DEPENDS)
 

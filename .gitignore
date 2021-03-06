@@ -6,3 +6,5 @@ main
 main.d
 
 *.o
+
+!image.png
