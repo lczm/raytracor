@@ -22,6 +22,7 @@ class hittable_list : public hittable {
                 const ray& r, double t_min, double t_max, hit_record& rec) const override;
 };
 
+// Method to check if, given a ray, if there are any objects that intersect with the ray
 bool hittable_list::hit(const ray& r, double t_min, double t_max, hit_record& rec) const {
     hit_record temp_rec;
     bool hit_anything = false;

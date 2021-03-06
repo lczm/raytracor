@@ -7,7 +7,10 @@
 #include "camera.h"
 
 color ray_color(const ray& r, const hittable& world) {
+    // Create a temporary hit_record
     hit_record rec;
+    // If the world hits anything at the current ray, rec will be modified
+    // with the appropriate values
     if (world.hit(r, 0, infinity, rec)) {
         return 0.5 * (rec.normal + color(1, 1, 1));
     }
@@ -28,7 +31,7 @@ color ray_color(const ray& r, const hittable& world) {
 int main() {
     // Image dimensions, 16:9 aspect ratio, calculate width & height
     const auto aspect_ratio = 16.0 / 9.0;
-    const int image_width = 640;
+    const int image_width = 400;
     const int image_height = static_cast<int>(image_width / aspect_ratio);
     const int samples_per_pixel = 100;
 
@@ -50,11 +53,17 @@ int main() {
         // Iterate over the amount of pixels (width)
         for (int i = 0; i < image_width; ++i) {
             color pixel_color(0, 0, 0);
-            // Relative scale of where the x-axis is on.
+            // Anti alias around the pixel
+            // Using random is to "move" the pixel around a 0-1 area
+            // Given enough times (samples_per_pixel), this will normalize out
+            // and 'antialias' on the pixel.
             for (int s = 0; s < samples_per_pixel; ++s) {
+                // Convert to relative scales
                 auto u = (i + random_double()) / (image_width - 1);
                 auto v = (j + random_double()) / (image_height - 1);
+                // Get a ray from the camera
                 ray r = cam.get_ray(u, v);
+                // Get the colour
                 pixel_color += ray_color(r, world);
             }
             write_color(std::cout, pixel_color, samples_per_pixel);
