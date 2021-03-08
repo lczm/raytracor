@@ -121,6 +121,8 @@ static inline vec3 unit_vector(vec3 v) {
     return v / v.length();
 }
 
+// Perhaps don't inline this? Function feels a little too big
+// to inline
 static vec3 random_in_unit_sphere() {
     while (true) {
         auto p = vec3::random(-1, 1);
@@ -129,4 +131,8 @@ static vec3 random_in_unit_sphere() {
         }
         return p;
     }
+}
+
+static vec3 random_unit_vector() {
+    return unit_vector(random_in_unit_sphere());
 }

@@ -17,8 +17,10 @@ color ray_color(const ray& r, const hittable& world, int depth) {
 
     // If the world hits anything at the current ray, rec will be modified
     // with the appropriate values
-    if (world.hit(r, 0, infinity, rec)) {
-        point3 target = rec.p + rec.normal + random_in_unit_sphere();
+    // Change 0 to 0.001 as t_min can be ~0.000000001 - shadow acne
+    // https://digitalrune.github.io/DigitalRune-Documentation/html/3f4d959e-9c98-4a97-8d85-7a73c26145d7.htm
+    if (world.hit(r, 0.001, infinity, rec)) {
+        point3 target = rec.p + rec.normal + random_unit_vector();
         return 0.5 * ray_color(ray(rec.p, target - rec.p), world, depth - 1);
     }
 
