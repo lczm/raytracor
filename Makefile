@@ -3,6 +3,7 @@ OBJECTS := $(patsubst %.cpp,%.o,$(SOURCES))
 DEPENDS := $(patsubst %.cpp,%.d,$(SOURCES))
 
 WARNINGS := -Wall -Wextra
+FLAGS := -O2
 
 .PHONY: all clean
 
@@ -12,7 +13,7 @@ clean:
 	$(RM) $(OBJECTS) $(DEPENDS) raytracor
 
 raytracor: $(OBJECTS)
-	g++ $(WARNINGS) $^ -o $@
+	g++ $(WARNINGS) $(FLAGS) $^ -o $@
 
 run: raytracor
 	./raytracor $(ARGS) > image.ppm && convert image.ppm image.png && feh image.png
@@ -20,4 +21,4 @@ run: raytracor
 -include $(DEPENDS)
 
 %.o: %.cpp Makefile
-	g++ $(WARNINGS) -MMD -MP -c $< -o $@
+	g++ $(WARNINGS) $(FLAGS) -MMD -MP -c $< -o $@

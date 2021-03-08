@@ -6,13 +6,20 @@
 #include "sphere.h"
 #include "camera.h"
 
-color ray_color(const ray& r, const hittable& world) {
+color ray_color(const ray& r, const hittable& world, int depth) {
     // Create a temporary hit_record
     hit_record rec;
+
+    // If exceeded ray bounce limit, don't generate anymore light
+    if (depth <= 0) {
+        return color(0, 0, 0);
+    }
+
     // If the world hits anything at the current ray, rec will be modified
     // with the appropriate values
     if (world.hit(r, 0, infinity, rec)) {
-        return 0.5 * (rec.normal + color(1, 1, 1));
+        point3 target = rec.p + rec.normal + random_in_unit_sphere();
+        return 0.5 * ray_color(ray(rec.p, target - rec.p), world, depth - 1);
     }
 
     // Get unit vector of the ray
@@ -31,9 +38,11 @@ color ray_color(const ray& r, const hittable& world) {
 int main() {
     // Image dimensions, 16:9 aspect ratio, calculate width & height
     const auto aspect_ratio = 16.0 / 9.0;
-    const int image_width = 400;
+    const int image_width = 1280;
     const int image_height = static_cast<int>(image_width / aspect_ratio);
     const int samples_per_pixel = 100;
+    // So that it ray_color doesn't try to bounce limitlessly and segfault
+    const int max_depth = 10;
 
     // World
     hittable_list world;
@@ -49,7 +58,7 @@ int main() {
     // Iterate over the amount of pixels (height)
     // Starting from image_height-1, as it starts from the top-left
     for (int j = image_height-1; j >= 0; --j) {
-        std::cerr << "\rScanlines Remaining: " << j << ' ' << std::flush;
+        std::cerr << "\rScanlines Remaining: " << j << std::flush;
         // Iterate over the amount of pixels (width)
         for (int i = 0; i < image_width; ++i) {
             color pixel_color(0, 0, 0);
@@ -64,7 +73,8 @@ int main() {
                 // Get a ray from the camera
                 ray r = cam.get_ray(u, v);
                 // Get the colour
-                pixel_color += ray_color(r, world);
+                // Pass in max_depth first, as it will decrement as it recursively goes down
+                pixel_color += ray_color(r, world, max_depth);
             }
             write_color(std::cout, pixel_color, samples_per_pixel);
         }
