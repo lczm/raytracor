@@ -20,6 +20,11 @@ color ray_color(const ray& r, const hittable& world, int depth) {
     // Change 0 to 0.001 as t_min can be ~0.000000001 - shadow acne
     // https://digitalrune.github.io/DigitalRune-Documentation/html/3f4d959e-9c98-4a97-8d85-7a73c26145d7.htm
     if (world.hit(r, 0.001, infinity, rec)) {
+        // Uniform scatter direction???
+        // point3 target = rec.p + random_in_hemisphere(rec.normal);
+
+        // Lambertian diffuse
+        // https://en.wikipedia.org/wiki/Lambertian_reflectance
         point3 target = rec.p + rec.normal + random_unit_vector();
         return 0.5 * ray_color(ray(rec.p, target - rec.p), world, depth - 1);
     }
@@ -40,9 +45,10 @@ color ray_color(const ray& r, const hittable& world, int depth) {
 int main() {
     // Image dimensions, 16:9 aspect ratio, calculate width & height
     const auto aspect_ratio = 16.0 / 9.0;
-    const int image_width = 1280;
+    const int image_width = 1920;
     const int image_height = static_cast<int>(image_width / aspect_ratio);
-    const int samples_per_pixel = 100;
+    // Previously 100
+    const int samples_per_pixel = 30;
     // So that it ray_color doesn't try to bounce limitlessly and segfault
     const int max_depth = 10;
 
