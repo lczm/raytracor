@@ -2,9 +2,14 @@
 
 #include "ray.h"
 
+class material;
+
 struct hit_record {
     point3 p;
     vec3 normal;
+    // When a ray hits the surface, mata_ptr will be set to the
+    // material that the surface has
+    shared_ptr<material> mat_ptr;
     double t;
     bool front_face;
 
