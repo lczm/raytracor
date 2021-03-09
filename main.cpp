@@ -56,10 +56,10 @@ color ray_color(const ray& r, const hittable& world, int depth) {
 int main() {
     // Image dimensions, 16:9 aspect ratio, calculate width & height
     const auto aspect_ratio = 16.0 / 9.0;
-    const int image_width = 1920;
+    const int image_width = 1280;
     const int image_height = static_cast<int>(image_width / aspect_ratio);
     // Previously 100
-    const int samples_per_pixel = 50;
+    const int samples_per_pixel = 15;
     // So that it ray_color doesn't try to bounce limitlessly and segfault
     const int max_depth = 10;
 
@@ -67,9 +67,11 @@ int main() {
     hittable_list world;
 
     auto material_ground = make_shared<lambertian>(color(0.8, 0.8, 0.0));
-    auto material_center = make_shared<lambertian>(color(0.7, 0.3, 0.3));
-    auto material_left   = make_shared<metal>(color(0.8, 0.8, 0.8));
-    auto material_right  = make_shared<metal>(color(0.8, 0.6, 0.2));
+    // auto material_center = make_shared<lambertian>(color(0.7, 0.3, 0.3));
+    // auto material_left   = make_shared<metal>(color(0.8, 0.8, 0.8), 0.0);
+    auto material_center = make_shared<dielectric>(1.5);
+    auto material_left   = make_shared<dielectric>(1.5);
+    auto material_right  = make_shared<metal>(color(0.8, 0.6, 0.2), 1.0);
 
     // "Ground" sphere - make it big enough to look like a ground of some sort
     world.add(make_shared<sphere>(point3(0.0, -100.5, -1.0), 100.0, material_ground));
