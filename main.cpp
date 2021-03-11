@@ -86,12 +86,20 @@ int main() {
     // Right sphere
     world.add(make_shared<sphere>(point3(1.0, 0.0, -1.0), 0.5, material_right));
 
+    point3 lookfrom(3, 3, 2);
+    point3 lookat(0, 0, -1);
+    vec3 vup(0, 1, 0);
+    auto dist_to_focus = (lookfrom-lookat).length();
+    auto aperture = 1.2;
+
     // Camera - 90.0 vertical fov (degrees), 16:9 aspect ratio
-    camera cam(point3(-0.5,1.5,5),  // vec3 lookfrom
-               point3(0,0,-1),      // vec3 lookat
-               vec3(0,1,0),         // vec3 vertical up
-               90.0,                // vertical fov (degrees)
-               aspect_ratio);       // (most likely) 16:9 aspect ratio
+    camera cam(lookfrom,            // vec3 lookfrom
+               lookat,              // vec3 lookat
+               vup,                 // vec3 vertical up
+               20.0,                // vertical fov (degrees)
+               aspect_ratio,        // (most likely) 16:9 aspect ratio
+               aperture,
+               dist_to_focus);
 
     // Render the image
     std::cout << "P3\n" << image_width << ' ' << image_height << "\n255\n";
