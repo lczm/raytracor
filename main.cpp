@@ -7,6 +7,53 @@
 #include "camera.h"
 #include "material.h"
 
+hittable_list random_scene() {
+    hittable_list world;
+
+    auto ground_material = make_shared<lambertian>(color(0.5, 0.5, 0.5));
+    world.add(make_shared<sphere>(point3(0, -1000, 0), 1000, ground_material));
+
+    for (int a = -5; a < 5; a++) {
+        for (int b = -5; b < 5; b++) {
+            auto choose_mat = random_double();
+            point3 center(a + 0.9 * random_double(), 0.2,
+                          b + 0.9 * random_double());
+
+            if ((center - point3(4, 0.2, 0)).length() > 0.9) {
+                shared_ptr<material> sphere_material;
+
+                // 80% chance of a diffuse
+                if (choose_mat < 0.8) {
+                    // diffuse
+                    auto albedo = color::random() * color::random();
+                    sphere_material = make_shared<lambertian>(albedo);
+                    world.add(make_shared<sphere>(center, 0.2, sphere_material));
+                } else if (choose_mat < 0.95) { // 15% chance of a metal
+                    // metal
+                    auto albedo = color::random(0.5, 1);
+                    auto fuzz = random_double(0, 0.5);
+                    sphere_material = make_shared<metal>(albedo, fuzz);
+                    world.add(make_shared<sphere>(center, 0.2, sphere_material));
+                } else { // 5% chance of glass
+                    // glass
+                    sphere_material = make_shared<dielectric>(1.5);
+                    world.add(make_shared<sphere>(center, 0.2, sphere_material));
+                }
+            }
+        }
+    }
+
+    auto material_dielectric = make_shared<dielectric>(1.5);
+    auto material_lambertian = make_shared<lambertian>(color(0.4, 0.2, 0.1));
+    auto material_metal = make_shared<metal>(color(0.7, 0.6, 0.5), 0.0);
+
+    world.add(make_shared<sphere>(point3(0, 1, 0), 1.0, material_dielectric));
+    world.add(make_shared<sphere>(point3(-4, 1, 0), 1.0, material_lambertian));
+    world.add(make_shared<sphere>(point3(4, 1, 0), 1.0, material_metal));
+
+    return world;
+}
+
 color ray_color(const ray& r, const hittable& world, int depth) {
     // Create a temporary hit_record
     hit_record rec;
@@ -56,37 +103,37 @@ color ray_color(const ray& r, const hittable& world, int depth) {
 int main() {
     // Image dimensions, 16:9 aspect ratio, calculate width & height
     const auto aspect_ratio = 16.0 / 9.0;
-    const int image_width = 1280;
+    const int image_width = 1920;
     const int image_height = static_cast<int>(image_width / aspect_ratio);
     // Previously 100
-    const int samples_per_pixel = 15;
+    const int samples_per_pixel = 500;
     // So that it ray_color doesn't try to bounce limitlessly and segfault
-    const int max_depth = 10;
+    const int max_depth = 30;
 
     // World
-    hittable_list world;
+    hittable_list world = random_scene();
 
-    auto material_ground = make_shared<lambertian>(color(0.8, 0.8, 0.0));
-    auto material_center = make_shared<lambertian>(color(0.1, 0.2, 0.5));
+    // auto material_ground = make_shared<lambertian>(color(0.8, 0.8, 0.0));
+    // auto material_center = make_shared<lambertian>(color(0.1, 0.2, 0.5));
     // auto material_left   = make_shared<metal>(color(0.8, 0.8, 0.8), 0.0);
     // auto material_center = make_shared<dielectric>(1.5);
-    auto material_left   = make_shared<dielectric>(1.5);
-    auto material_right  = make_shared<metal>(color(0.8, 0.6, 0.2), 0.5);
+    // auto material_left   = make_shared<dielectric>(1.5);
+    // auto material_right  = make_shared<metal>(color(0.8, 0.6, 0.2), 0.5);
 
     // "Ground" sphere - make it big enough to look like a ground of some sort
-    world.add(make_shared<sphere>(point3(0.0, -100.5, -1.0), 100.0, material_ground));
+    // world.add(make_shared<sphere>(point3(0.0, -100.5, -1.0), 100.0, material_ground));
     // Center sphere
-    world.add(make_shared<sphere>(point3(0.0, 0.0, -1.0), 0.5, material_center));
+    // world.add(make_shared<sphere>(point3(0.0, 0.0, -1.0), 0.5, material_center));
     // Left sphere
-    world.add(make_shared<sphere>(point3(-1.0, 0.0, -1.0), 0.5, material_left));
+    // world.add(make_shared<sphere>(point3(-1.0, 0.0, -1.0), 0.5, material_left));
     // Another left sphere
     // If given a negative radius, it will become a glass sphere
     // Reflection will be similar to what it is like physically with a glass sphere
-    world.add(make_shared<sphere>(point3(-1.0, 0.0, -1.0), -0.4, material_left));
+    // world.add(make_shared<sphere>(point3(-1.0, 0.0, -1.0), -0.4, material_left));
     // Right sphere
-    world.add(make_shared<sphere>(point3(1.0, 0.0, -1.0), 0.5, material_right));
+    // world.add(make_shared<sphere>(point3(1.0, 0.0, -1.0), 0.5, material_right));
 
-    point3 lookfrom(3, 3, 2);
+    point3 lookfrom(13, 3, 2);
     point3 lookat(0, 0, -1);
     vec3 vup(0, 1, 0);
     auto dist_to_focus = (lookfrom-lookat).length();
