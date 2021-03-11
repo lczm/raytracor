@@ -9,6 +9,7 @@ Learning to raytrace... Here's a picture of what it currently produces if ran.
 
 ## Build
 ```
-git clone https://github.com/lczm/raytractor
+git clone https://github.com/lczm/raytracor
+cd raytracor
 make run
 ```

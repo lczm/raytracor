@@ -84,8 +84,31 @@ class dielectric : public material {
             double refraction_ratio = rec.front_face ? (1.0 / ir) : ir;
 
             vec3 unit_direction = unit_vector(r_in.direction());
-            vec3 refracted = refract(unit_direction, rec.normal, refraction_ratio);
-            scattered = ray(rec.p, refracted);
+            double cos_theta = fmin(dot(-unit_direction, rec.normal), 1.0);
+            double sin_theta = sqrt(1.0 - cos_theta * cos_theta);
+
+            bool cannot_refract;
+            if (refraction_ratio * sin_theta > 1.0)
+                cannot_refract = true;
+            else
+                cannot_refract = false;
+
+            vec3 direction;
+            if (cannot_refract || reflectance(cos_theta, refraction_ratio) > random_double())
+                direction = reflect(unit_direction, rec.normal);
+            else
+                direction = refract(unit_direction, rec.normal, refraction_ratio);
+
+            scattered = ray(rec.p, direction);
             return true;
+        }
+
+    private:
+        // Schlick Approximation
+        // https://en.wikipedia.org/wiki/Schlick%27s_approximation
+        static double reflectance(double cosine, double ref_index) {
+            auto r0 = (1 - ref_index) / (1 + ref_index);
+            r0 = r0 * r0;
+            return r0 + (1 - r0) * pow((1 - cosine), 5);
         }
 };
