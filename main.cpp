@@ -13,8 +13,8 @@ hittable_list random_scene() {
     auto ground_material = make_shared<lambertian>(color(0.5, 0.5, 0.5));
     world.add(make_shared<sphere>(point3(0, -1000, 0), 1000, ground_material));
 
-    for (int a = -5; a < 5; a++) {
-        for (int b = -5; b < 5; b++) {
+    for (int a = -3; a < 3; a++) {
+        for (int b = -3; b < 3; b++) {
             auto choose_mat = random_double();
             point3 center(a + 0.9 * random_double(), 0.2,
                           b + 0.9 * random_double());
@@ -137,7 +137,7 @@ int main() {
     point3 lookat(0, 0, -1);
     vec3 vup(0, 1, 0);
     auto dist_to_focus = (lookfrom-lookat).length();
-    auto aperture = 1.2;
+    auto aperture = 0.2;
 
     // Camera - 90.0 vertical fov (degrees), 16:9 aspect ratio
     camera cam(lookfrom,            // vec3 lookfrom
