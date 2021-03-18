@@ -7,7 +7,7 @@
 #include "camera.h"
 #include "material.h"
 
-hittable_list random_scene() {
+hittable_list random_scene_three_cubes() {
     hittable_list world;
 
     auto ground_material = make_shared<lambertian>(color(0.5, 0.5, 0.5));
@@ -45,11 +45,26 @@ hittable_list random_scene() {
 
     auto material_dielectric = make_shared<dielectric>(1.5);
     auto material_lambertian = make_shared<lambertian>(color(0.4, 0.2, 0.1));
-    auto material_metal = make_shared<metal>(color(0.7, 0.6, 0.5), 0.0);
+    auto material_metal      = make_shared<metal>(color(0.7, 0.6, 0.5), 0.0);
 
     world.add(make_shared<sphere>(point3(0, 1, 0), 1.0, material_dielectric));
     world.add(make_shared<sphere>(point3(-4, 1, 0), 1.0, material_lambertian));
     world.add(make_shared<sphere>(point3(4, 1, 0), 1.0, material_metal));
+
+    return world;
+}
+
+hittable_list random_scene_small() {
+    hittable_list world;
+
+    // Materials
+    // auto material_dielectric = make_shared<dielectric>(1.5);
+    auto material_lambertian = make_shared<lambertian>(color(0.8, 0.1, 0.1));
+    auto material_lambertian_ground = make_shared<lambertian>(color(0.1, 0.1, 0.1));
+    // auto material_metal      = make_shared<metal>(color(0.7, 0.6, 0.5), 0.0);
+
+    world.add(make_shared<sphere>(point3(0, -1000, 0), 1000, material_lambertian_ground));
+    world.add(make_shared<sphere>(point3(0, 1, 0), 1.0, material_lambertian));
 
     return world;
 }
@@ -103,15 +118,16 @@ color ray_color(const ray& r, const hittable& world, int depth) {
 int main() {
     // Image dimensions, 16:9 aspect ratio, calculate width & height
     const auto aspect_ratio = 16.0 / 9.0;
-    const int image_width = 1920;
+    const int image_width = 1280;
     const int image_height = static_cast<int>(image_width / aspect_ratio);
     // Previously 100
-    const int samples_per_pixel = 500;
+    const int samples_per_pixel = 30;
     // So that it ray_color doesn't try to bounce limitlessly and segfault
-    const int max_depth = 30;
+    const int max_depth = 10;
 
     // World
-    hittable_list world = random_scene();
+    // hittable_list world = random_scene_three_cubes();
+    hittable_list world = random_scene_small();
 
     // auto material_ground = make_shared<lambertian>(color(0.8, 0.8, 0.0));
     // auto material_center = make_shared<lambertian>(color(0.1, 0.2, 0.5));
@@ -137,7 +153,7 @@ int main() {
     point3 lookat(0, 0, -1);
     vec3 vup(0, 1, 0);
     auto dist_to_focus = (lookfrom-lookat).length();
-    auto aperture = 0.2;
+    auto aperture = 0.15;
 
     // Camera - 90.0 vertical fov (degrees), 16:9 aspect ratio
     camera cam(lookfrom,            // vec3 lookfrom
