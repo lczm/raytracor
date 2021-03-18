@@ -118,12 +118,12 @@ color ray_color(const ray& r, const hittable& world, int depth) {
 int main() {
     // Image dimensions, 16:9 aspect ratio, calculate width & height
     const auto aspect_ratio = 16.0 / 9.0;
-    const int image_width = 1280;
+    const int image_width = 1920;
     const int image_height = static_cast<int>(image_width / aspect_ratio);
     // Previously 100
-    const int samples_per_pixel = 30;
+    const int samples_per_pixel = 50;
     // So that it ray_color doesn't try to bounce limitlessly and segfault
-    const int max_depth = 10;
+    const int max_depth = 15;
 
     // World
     // hittable_list world = random_scene_three_cubes();

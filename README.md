@@ -1,6 +1,6 @@
 # Raytracor
 
-Learning to raytrace... Here's a picture of what it currently produces if ran.
+Learning to raytrace..., going through [Ray Tracing In One Weekend](https://raytracing.github.io/books/RayTracingInOneWeekend.html). Here's a picture of what it currently produces if ran.
 ![Raytraced Image](https://github.com/lczm/raytracor/blob/master/image.png)
 
 ## Requirements
